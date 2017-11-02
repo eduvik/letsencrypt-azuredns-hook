@@ -36,10 +36,10 @@ function parseSubDomain {
     FQDN="$1"
     log "    FQDN: '${FQDN}''" 4
 
-    DOMAIN=`sed -E 's/(.*)\.(.*\..*$)/\2/' <<< "${FQDN}"`
+    DOMAIN=`sed -E 's/(^[^.]+)\.(.*)/\2/' <<< "${FQDN}"`
     log "    DOMAIN: '${DOMAIN}'" 4
 
-    SUBDOMAIN=`sed -E 's/(.*)\.(.*\..*$)/\1/' <<< "${FQDN}"`
+    SUBDOMAIN=`sed -E 's/(^[^.]+)\.(.*)/\1/' <<< "${FQDN}"`
     log "    SUBDOMAIN: '${SUBDOMAIN}'" 4
 
     echo "${SUBDOMAIN}"
