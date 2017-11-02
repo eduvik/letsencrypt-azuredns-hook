@@ -28,7 +28,7 @@ function login_azure {
     # Azure DNS Connection Variables
     # You should create an SPN in Azure first and authorize it to make changes to Azure DNS
     #  REF: https://azure.microsoft.com/en-us/documentation/articles/resource-group-create-service-principal-portal/
-    azure login -u ${SPN_USERNAME} -p ${SPN_PASSWORD} --tenant ${TENANT} --service-principal --quiet > /dev/null
+    az login --service-principal -u ${SPN_USERNAME} -p ${SPN_PASSWORD} --tenant ${TENANT}  > /dev/null
 }
 function parseSubDomain {
     log "  Parse SubDomain" 4
@@ -82,9 +82,7 @@ case ${PHASE} in
         # Commands
         log "" 4
         log "    Running azure cli commands" 4
-        respCreate=$(azure network dns record-set create -g ${RESOURCE_GROUP} -z ${DNS_ZONE} --type TXT -n ${CHALLENGE_KEY} --ttl ${TTL} --json)
-        log "      Create: '$respCreate'" 4
-        respAddRec=$(azure network dns record-set add-record -g ${RESOURCE_GROUP} -z ${DNS_ZONE} --type TXT -n ${CHALLENGE_KEY} --text ${TOKEN_VALUE} --json)
+        respAddRec=$(az network dns record-set txt add-record -g ${RESOURCE_GROUP} -z ${DNS_ZONE} -n ${CHALLENGE_KEY} -v ${TOKEN_VALUE} --output json)
         log "      AddRec: '$respAddRec'" 4
         ;;
 
@@ -100,7 +98,7 @@ case ${PHASE} in
         # Commands
         log "" 4
         log "    Running azure cli commands" 4
-        respDel=$(azure network dns record-set delete -g ${RESOURCE_GROUP} -z ${DNS_ZONE} --type TXT -n ${CHALLENGE_KEY} -q --json)
+        respDel=$(az network dns record-set txt delete -g ${RESOURCE_GROUP} -z ${DNS_ZONE} -n ${CHALLENGE_KEY} -y)
         log "      Delete: '$respDel'" 4
         ;;
 
